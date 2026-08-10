@@ -142,11 +142,11 @@ export default function LandingExperience() {
       <section className="atelier-stage" aria-label="Choose piercing or tattoo">
         <div className="atelier-panel atelier-piercing" onMouseEnter={() => enter("piercing")} onMouseLeave={() => setActive(null)}>
           <div className="word-theatre piercing-theatre" ref={piercingTheatre}>
-            <span className="animated-word word-ghost" aria-hidden="true">pıercıng</span>
-            <span className="animated-word word-fill" aria-hidden="true" ref={piercingFill}>p<span className="dotted-letter" ref={firstI}>ı<i className="drawn-dot" ref={firstDot} /></span>erc<span className="dotted-letter" ref={secondI}>ı<i className="drawn-dot" ref={secondDot} /></span>ng</span>
+            <span className="animated-word word-ghost" aria-hidden="true">Pıercıng</span>
+            <span className="animated-word word-fill" aria-hidden="true" ref={piercingFill}>P<span className="dotted-letter" ref={firstI}>ı<i className="drawn-dot" ref={firstDot} /></span>erc<span className="dotted-letter" ref={secondI}>ı<i className="drawn-dot" ref={secondDot} /></span>ng</span>
             <span className="travelling-needle" ref={needle} aria-hidden="true"><i className="needle-eye" /><i className="needle-shaft" /><i className="needle-tip" /></span>
           </div>
-          <p className="atelier-copy">Considered adornment.<br />Beautifully, unmistakably yours.</p><span className="atelier-enter">Enter the lounge <i>↗</i></span>
+          <p className="atelier-copy">Considered adornment.<br />Beautifully, unmistakably yours.</p><span className="atelier-enter">Enter the lounge</span>
         </div>
         <div className="atelier-panel atelier-tattoo" onMouseEnter={() => enter("tattoo")} onMouseLeave={() => setActive(null)}>
           <div className="word-theatre tattoo-theatre" ref={tattooTheatre}>
@@ -158,7 +158,7 @@ export default function LandingExperience() {
             <span className="tattoo-fine-detail" aria-hidden="true"><i /><i /><i /></span>
             <span className="tattoo-machine" ref={tattooMachine} aria-hidden="true"><i className="machine-frame" /><i className="machine-coil coil-a" /><i className="machine-coil coil-b" /><i className="machine-grip" /><i className="machine-needle" /></span>
           </div>
-          <p className="atelier-copy">Original work by Abbie Fletcher.</p><img className="fletcher-logo-art" src="/fletcher-tattoos-logo.png" alt="Fletcher Tattoos" /><span className="atelier-enter">Fletcher Tattoos <i>↗</i></span>
+          <p className="atelier-copy">Original work by Abbie Fletcher.</p><img className="fletcher-logo-art" src="/fletcher-tattoos-logo.png" alt="Fletcher Tattoos" /><span className="atelier-enter">Fletcher Tattoos</span>
         </div>
       </section>
       <footer className="atelier-footer"><span>SHREWSBURY · SY1 1PU</span><span><i /> PRIVATE · WELCOMING · INDEPENDENT</span><span>EST. FOR SELF-EXPRESSION</span></footer>
