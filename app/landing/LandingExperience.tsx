@@ -1,11 +1,12 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type Choice = "piercing" | "tattoo" | null;
 
 export default function LandingExperience() {
   const [active, setActive] = useState<Choice>(null);
+  const [mobileAutoplay, setMobileAutoplay] = useState(false);
   const piercingTheatre = useRef<HTMLDivElement>(null);
   const piercingFill = useRef<HTMLSpanElement>(null);
   const needle = useRef<HTMLSpanElement>(null);
@@ -104,8 +105,39 @@ export default function LandingExperience() {
     requestAnimationFrame(choice === "piercing" ? animatePiercing : animateTattoo);
   }
 
+  useEffect(() => {
+    const mobile = window.matchMedia("(max-width: 800px)").matches;
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!mobile || reducedMotion) return;
+
+    let cancelled = false;
+    let tattooTimer = 0;
+    let finishTimer = 0;
+    setMobileAutoplay(true);
+
+    document.fonts.ready.then(() => {
+      if (cancelled) return;
+      requestAnimationFrame(() => {
+        if (cancelled) return;
+        setActive("piercing");
+        animatePiercing();
+      });
+      tattooTimer = window.setTimeout(() => {
+        setActive("tattoo");
+        animateTattoo();
+      }, 2750);
+      finishTimer = window.setTimeout(() => setActive(null), 6600);
+    });
+
+    return () => {
+      cancelled = true;
+      window.clearTimeout(tattooTimer);
+      window.clearTimeout(finishTimer);
+    };
+  }, []);
+
   return (
-    <main className={`atelier ${active ? `atelier-${active}` : ""}`}>
+    <main className={`atelier ${mobileAutoplay ? "mobile-autoplay" : ""} ${active ? `atelier-${active}` : ""}`}>
       <header className="atelier-header"><a className="atelier-brand" href="/" aria-label="The Needle Lounge home"><span>N</span><p><b>The Needle</b><i>Lounge</i></p></a><p className="atelier-address">19 Mardol · Shrewsbury<span>Independent body art studio</span></p><p className="atelier-prompt">Choose your craft <b>↓</b></p></header>
       <section className="atelier-stage" aria-label="Choose piercing or tattoo">
         <div className="atelier-panel atelier-piercing" onMouseEnter={() => enter("piercing")} onMouseLeave={() => setActive(null)}>
