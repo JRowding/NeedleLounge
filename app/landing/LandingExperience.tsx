@@ -146,7 +146,7 @@ export default function LandingExperience() {
             <span className="animated-word word-fill" aria-hidden="true" ref={piercingFill}>P<span className="dotted-letter" ref={firstI}>ı<i className="drawn-dot" ref={firstDot} /></span>erc<span className="dotted-letter" ref={secondI}>ı<i className="drawn-dot" ref={secondDot} /></span>ng</span>
             <span className="travelling-needle" ref={needle} aria-hidden="true"><i className="needle-eye" /><i className="needle-shaft" /><i className="needle-tip" /></span>
           </div>
-          <p className="atelier-copy">Considered adornment.<br />Beautifully, unmistakably yours.</p><span className="atelier-enter">Enter the lounge</span>
+          <p className="atelier-copy">Considered adornment.<br />Beautifully, unmistakably yours.</p><img className="needle-lounge-logo-art" src="/needle-lounge-logo.png" alt="The Needle Lounge" /><span className="atelier-enter">Enter the lounge</span>
         </div>
         <div className="atelier-panel atelier-tattoo" onMouseEnter={() => enter("tattoo")} onMouseLeave={() => setActive(null)}>
           <div className="word-theatre tattoo-theatre" ref={tattooTheatre}>
