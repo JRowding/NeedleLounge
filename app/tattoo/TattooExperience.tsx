@@ -25,10 +25,6 @@ const socials = {
   facebook: "https://www.facebook.com/profile.php?id=61561303597287",
 };
 
-function ArrowIcon() {
-  return <span aria-hidden="true">↗</span>;
-}
-
 export default function TattooExperience() {
   const [showIndex, setShowIndex] = useState(0);
   const [showPaused, setShowPaused] = useState(false);
@@ -132,7 +128,7 @@ export default function TattooExperience() {
 
       <section className="fx-styles" id="style" aria-labelledby="style-title">
         <div className="fx-styles-heading"><h2 id="style-title">One hand.<br /><em>Many marks.</em></h2><p>Abbie’s publicly listed styles span five complementary approaches.</p></div>
-        <div className="fx-style-list">{styles.map(([number, title, description]) => <article key={number} tabIndex={0}><span>{number}</span><h3>{title}</h3><p>{description}</p><i aria-hidden="true">↗</i></article>)}</div>
+        <div className="fx-style-list">{styles.map(([number, title, description]) => <article key={number} tabIndex={0}><span>{number}</span><h3>{title}</h3><p>{description}</p></article>)}</div>
       </section>
 
       <section className="fx-about" id="about">
@@ -142,7 +138,7 @@ export default function TattooExperience() {
 
       <section className="fx-enquiries" id="enquiries">
         <h2>Your idea<br /><em>starts here.</em></h2><p>The online enquiry and booking experience is being prepared.</p><span className="fx-coming-soon">Coming soon</span>
-        <div className="fx-socials" aria-label="Fletcher Tattoos social links"><a href={socials.instagram} target="_blank" rel="noreferrer">Instagram <ArrowIcon /></a><a href={socials.tiktok} target="_blank" rel="noreferrer">TikTok <ArrowIcon /></a><a href={socials.facebook} target="_blank" rel="noreferrer">Facebook <ArrowIcon /></a></div>
+        <div className="fx-socials" aria-label="Fletcher Tattoos social links"><a href={socials.instagram} target="_blank" rel="noreferrer">Instagram</a><a href={socials.tiktok} target="_blank" rel="noreferrer">TikTok</a><a href={socials.facebook} target="_blank" rel="noreferrer">Facebook</a></div>
       </section>
 
       <footer className="fx-footer"><a href="/">The Needle Lounge</a><span>19 Mardol · Shrewsbury · SY1 1PU</span><a href="#top">Back to top ↑</a></footer>
