@@ -7,6 +7,7 @@ type Choice = "piercing" | "tattoo" | null;
 export default function LandingExperience() {
   const [active, setActive] = useState<Choice>(null);
   const [mobileAutoplay, setMobileAutoplay] = useState(false);
+  const [departingForTattoo, setDepartingForTattoo] = useState(false);
   const piercingTheatre = useRef<HTMLDivElement>(null);
   const piercingFill = useRef<HTMLSpanElement>(null);
   const needle = useRef<HTMLSpanElement>(null);
@@ -105,6 +106,14 @@ export default function LandingExperience() {
     requestAnimationFrame(choice === "piercing" ? animatePiercing : animateTattoo);
   }
 
+  function prepareTattooNavigation() {
+    setDepartingForTattoo(true);
+    setMobileAutoplay(false);
+    setActive(null);
+    cancelWithin(tattooTheatre.current);
+    if (tattooMachine.current) tattooMachine.current.style.display = "none";
+  }
+
   useEffect(() => {
     const mobile = window.matchMedia("(max-width: 800px)").matches;
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -137,7 +146,7 @@ export default function LandingExperience() {
   }, []);
 
   return (
-    <main className={`atelier ${mobileAutoplay ? "mobile-autoplay" : ""} ${active ? `atelier-${active}` : ""}`}>
+    <main className={`atelier ${mobileAutoplay ? "mobile-autoplay" : ""} ${active ? `atelier-${active}` : ""} ${departingForTattoo ? "atelier-departing-for-tattoo" : ""}`}>
       <header className="atelier-header"><a className="atelier-brand" href="/" aria-label="The Needle Lounge home"><span>N</span><p><b>The Needle</b><i>Lounge</i></p></a><p className="atelier-address">19 Mardol · Shrewsbury<span>Independent body art studio</span></p><p className="atelier-prompt">Choose your craft <b>↓</b></p></header>
       <section className="atelier-stage" aria-label="Choose piercing or tattoo">
         <div className="atelier-panel atelier-piercing" onMouseEnter={() => enter("piercing")} onMouseLeave={() => setActive(null)}>
@@ -158,7 +167,7 @@ export default function LandingExperience() {
             <span className="tattoo-fine-detail" aria-hidden="true"><i /><i /><i /></span>
             <span className="tattoo-machine" ref={tattooMachine} aria-hidden="true"><i className="machine-frame" /><i className="machine-coil coil-a" /><i className="machine-coil coil-b" /><i className="machine-grip" /><i className="machine-needle" /></span>
           </div>
-          <p className="atelier-copy">Original work by Abbie Fletcher.</p><img className="fletcher-logo-art" src="/fletcher-tattoos-logo.png" alt="Fletcher Tattoos" /><a className="atelier-enter" href="/tattoo">Fletcher Tattoos</a>
+          <p className="atelier-copy">Original work by Abbie Fletcher.</p><img className="fletcher-logo-art" src="/fletcher-tattoos-logo.png" alt="Fletcher Tattoos" /><a className="atelier-enter" href="/tattoo" onPointerDown={prepareTattooNavigation} onClick={prepareTattooNavigation}>Fletcher Tattoos</a>
         </div>
       </section>
       <footer className="atelier-footer"><span>SHREWSBURY · SY1 1PU</span><span><i /> PRIVATE · WELCOMING · INDEPENDENT</span><span>EST. FOR SELF-EXPRESSION</span></footer>
