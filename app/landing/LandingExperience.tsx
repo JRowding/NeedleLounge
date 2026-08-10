@@ -158,7 +158,7 @@ export default function LandingExperience() {
             <span className="tattoo-fine-detail" aria-hidden="true"><i /><i /><i /></span>
             <span className="tattoo-machine" ref={tattooMachine} aria-hidden="true"><i className="machine-frame" /><i className="machine-coil coil-a" /><i className="machine-coil coil-b" /><i className="machine-grip" /><i className="machine-needle" /></span>
           </div>
-          <p className="atelier-copy">Original work by Abbie Fletcher.</p><img className="fletcher-logo-art" src="/fletcher-tattoos-logo.png" alt="Fletcher Tattoos" /><span className="atelier-enter">Fletcher Tattoos</span>
+          <p className="atelier-copy">Original work by Abbie Fletcher.</p><img className="fletcher-logo-art" src="/fletcher-tattoos-logo.png" alt="Fletcher Tattoos" /><a className="atelier-enter" href="/tattoo">Fletcher Tattoos</a>
         </div>
       </section>
       <footer className="atelier-footer"><span>SHREWSBURY · SY1 1PU</span><span><i /> PRIVATE · WELCOMING · INDEPENDENT</span><span>EST. FOR SELF-EXPRESSION</span></footer>
