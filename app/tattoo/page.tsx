@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import TattooExperience from "./TattooExperience";
+import BookExperience from "./BookExperience";
 
 export const metadata: Metadata = {
   title: "Fletcher Tattoos | The Needle Lounge",
@@ -7,5 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function TattooPage() {
-  return <TattooExperience />;
+  return <BookExperience />;
 }
