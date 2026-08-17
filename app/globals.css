@@ -411,6 +411,48 @@ html:has(.fixed-book-site),body:has(.fixed-book-site){height:100%;overflow:hidde
 .booking-paper-finish{display:grid;grid-template-columns:auto 1fr;gap:12px 18px;align-items:center;padding-top:8px}.booking-paper-finish>button{padding:15px 20px;border:0;background:#cf483f;color:white;text-transform:uppercase;letter-spacing:.14em;font-size:7px;cursor:pointer}.booking-paper-finish p{margin:0;color:#756b61;font-size:9px;line-height:1.5}.booking-paper-finish strong{grid-column:1/-1;padding:12px 14px;border-left:3px solid #cf483f;background:#fff7;font-size:10px;line-height:1.5}
 @keyframes bookingOverlayIn{from{opacity:0}to{opacity:1}}@keyframes bookingPaperUnfold{0%{opacity:0;transform:perspective(1000px) scale(.18,.1) rotateX(62deg) rotateZ(-4deg);filter:brightness(.65)}38%{opacity:1;transform:perspective(1000px) scale(.74,.55) rotateX(28deg) rotateZ(1.8deg)}72%{transform:perspective(1000px) scale(1.015,.96) rotateX(-2deg) rotateZ(-.4deg)}100%{transform:none;filter:none}}
 @media(max-width:600px){.booking-paper-overlay{padding:10px}.booking-paper-dialog{width:100%;max-height:calc(100svh - 20px);padding:50px 19px 25px}.booking-paper-close{top:12px;right:13px}.booking-paper-dialog header{display:block;padding-right:0}.booking-paper-dialog header>p:first-child{margin-bottom:16px}.booking-paper-dialog h2{font-size:13vw;margin-bottom:16px}.booking-paper-dialog header>p:last-child{font-size:10px}.booking-paper-form{grid-template-columns:1fr;gap:15px;margin-top:24px}.booking-paper-wide{grid-column:1}.booking-paper-form input,.booking-paper-form textarea{font-size:16px}.booking-paper-upload>label{grid-template-columns:1fr}.booking-paper-upload>label span{grid-row:auto;text-align:center}.booking-paper-previews{grid-template-columns:1fr 1fr}.booking-paper-finish{grid-template-columns:1fr}.booking-paper-finish>button{width:100%}}
+
+/* Compact-book mobile compositions. The shorter, more natural book canvas
+   needs each spread art-directed independently rather than inheriting the
+   placements designed for the former tall cover. */
+@media(max-width:600px){
+  .page-artist .about-photo-three{right:2%;top:42%;bottom:auto;width:36%;height:21%;transform:rotate(4deg)}
+  .page-artist .about-photo-two{left:3%;bottom:2%;width:34%;height:25%;transform:rotate(-4deg)}
+  .page-artist .artist-secondary-copy{left:53%;top:65%;width:43%;padding:7px 1% 0 0}
+  .page-artist .artist-secondary-copy p{font-size:7px;line-height:1.38;margin:6px 0}
+  .page-artist .artist-secondary-copy span{font-size:4.5px}
+  .page-artist .artist-secondary-copy .fixed-book-signature{margin-top:5px;font-size:12px}
+
+  .page-links .fixed-links-copy{left:3%;right:3%;top:4%;width:auto}
+  .page-links .fixed-links-copy h1{font-size:11.5vw;line-height:.86;margin:7px 0 10px}
+  .page-links .fixed-links-copy nav{display:grid;grid-template-columns:repeat(3,1fr);width:100%;margin-top:7px;border:1px solid #504437}
+  .page-links .fixed-links-copy nav a{justify-content:center;gap:4px;min-height:36px;padding:7px 2px;border:0;border-right:1px solid #504437;font-size:9px;text-align:center}
+  .page-links .fixed-links-copy nav a:last-child{border-right:0}
+  .page-links .links-review-one.has-review{left:4%;right:auto;top:47%;bottom:auto;width:43%;min-height:150px;padding:16px 8px 8px;transform:rotate(-4deg)}
+  .page-links .links-review-two.has-review{left:auto;right:4%;top:44%;bottom:auto;width:43%;min-height:165px;padding:16px 8px 8px;transform:rotate(4deg)}
+  .page-links .links-review-one.has-review .review-copy,.page-links .links-review-two.has-review .review-copy{font-size:7.8px;line-height:1.4}
+
+  .page-faq .fixed-book-page-title{left:3%;top:11%;width:43%!important}
+  .page-faq .fixed-book-page-title h1{font-size:9.2vw;line-height:.88;margin:8px 0 12px}
+  .page-faq .fixed-book-faq{left:52%;right:2%;top:12%;bottom:2%;padding:0;overflow:hidden}
+  .page-faq .fixed-book-faq details{padding:5px 1px}
+  .page-faq .fixed-book-faq summary{font-size:8px;line-height:1.15}
+  .page-faq .fixed-book-faq p{font-size:5.8px;line-height:1.35;margin-top:4px}
+  .page-faq .faq-inline-review.has-review{width:98%;min-height:125px;margin:8px 1px 4px auto;padding:15px 7px 7px}
+  .page-faq .faq-inline-review.has-review .review-copy{font-size:7.4px;line-height:1.38}
+  .page-faq .faq-photo-tucked{left:3%;bottom:4%;width:41%;height:30%;transform:rotate(-5deg)}
+
+  .page-booking .fixed-book-booking-copy{left:2%;top:5%;width:96%}
+  .page-booking .fixed-book-booking-copy h1{font-size:11.2vw;line-height:.9;margin:8px 0 13px}
+  .page-booking .fixed-book-booking-copy>p:not(.fixed-book-kicker){width:43%;font-size:7px;line-height:1.42}
+  .page-booking .fixed-book-booking-copy>div{margin-top:10px}
+  .page-booking .fixed-book-booking-copy button{padding:10px 12px;font-size:5px}
+  .page-booking .booking-review-low.has-review{left:auto;right:3%;top:45%;bottom:auto;width:42%;min-height:145px;padding:15px 8px 8px;transform:rotate(3deg)}
+  .page-booking .booking-review-low.has-review .review-copy{font-size:7.4px;line-height:1.38}
+  .page-booking .fixed-book-checklist{left:3%;right:3%;bottom:1%;padding:10px 14px}
+  .page-booking .fixed-book-checklist ol{margin-top:5px}
+  .page-booking .fixed-book-checklist li{padding:4px 0;font-size:9px}
+}
 @media(prefers-reduced-motion:reduce){.booking-paper-overlay,.booking-paper-dialog{animation:none}.booking-paper-dialog{transform:none}}
 
 /* Fletcher Tattoos destination */
