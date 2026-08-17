@@ -1,6 +1,6 @@
 "use client";
 
-import { ChangeEvent, FormEvent, useCallback, useEffect, useRef, useState } from "react";
+import { ChangeEvent, FormEvent, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 
 const photos = [
   ["/fletcher/gallery-01.jpg", "Fine-line botanical and frog tattoo by Fletcher Tattoos"],
@@ -46,6 +46,7 @@ function PageContents({ page, onBookingOpen }: { page: Page; onBookingOpen?: () 
 type IntroPhase = "active" | "revealing" | "done" | "skipped";
 
 function FletcherBookIntro({ onPhase }: { onPhase: (phase: IntroPhase) => void }) {
+  const wipeFrameRef = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(true);
   const [tracing, setTracing] = useState(false);
   const [leaving, setLeaving] = useState(false);
@@ -76,10 +77,37 @@ function FletcherBookIntro({ onPhase }: { onPhase: (phase: IntroPhase) => void }
     return () => { document.body.style.overflow = previous; };
   }, [visible]);
 
+  useLayoutEffect(() => {
+    if (!visible) return;
+    let animationFrame = 0;
+    const alignWipeToCover = () => {
+      const frame = wipeFrameRef.current;
+      const cover = document.querySelector<HTMLElement>(".fixed-book-front-cover");
+      if (!frame || !cover) return;
+      const bounds = cover.getBoundingClientRect();
+      const coverStyle = window.getComputedStyle(cover);
+      frame.style.left = `${bounds.left}px`;
+      frame.style.top = `${bounds.top}px`;
+      frame.style.width = `${bounds.width}px`;
+      frame.style.height = `${bounds.height}px`;
+      frame.style.borderRadius = coverStyle.borderRadius;
+      frame.dataset.aligned = "true";
+    };
+    alignWipeToCover();
+    animationFrame = window.requestAnimationFrame(alignWipeToCover);
+    window.addEventListener("resize", alignWipeToCover);
+    return () => {
+      window.cancelAnimationFrame(animationFrame);
+      window.removeEventListener("resize", alignWipeToCover);
+    };
+  }, [visible]);
+
   if (!visible) return null;
   return <div className={`fx-loader book-intro-loader ${tracing ? "is-tracing" : ""} ${leaving ? "is-leaving" : ""}`} role="status" aria-live="polite" aria-label={tracing ? "Wiping cleansing foam to reveal Fletcher Tattoos before opening the artist book" : "Preparing the Fletcher Tattoos artist book"}>
-    <div className="book-intro-surface" aria-hidden="true"><i /><i /><i /><i /></div>
-    <img className="fx-wipe-hand-photo book-intro-hand" src="/fletcher/black-glove-cloth.png" alt="" aria-hidden="true" />
+    <div ref={wipeFrameRef} className="book-intro-cover-wipe" aria-hidden="true">
+      <div className="book-intro-surface"><i /><i /><i /><i /></div>
+      <img className="fx-wipe-hand-photo book-intro-hand" src="/fletcher/black-glove-cloth.png" alt="" />
+    </div>
     <span className="book-intro-a11y">The Fletcher Tattoos artist book will be ready shortly.</span>
   </div>;
 }
