@@ -60,12 +60,12 @@ function FletcherBookIntro({ onPhase }: { onPhase: (phase: IntroPhase) => void }
       }
     } catch {}
     const traceTimer = window.setTimeout(() => setTracing(true), reducedMotion ? 20 : 260);
-    const revealTimer = window.setTimeout(() => { setLeaving(true); onPhase("revealing"); }, reducedMotion ? 120 : 4750);
+    const revealTimer = window.setTimeout(() => { setLeaving(true); onPhase("revealing"); }, reducedMotion ? 120 : 4550);
     const finishTimer = window.setTimeout(() => {
       try { window.sessionStorage.setItem("fletcher-book-intro-seen", "1"); } catch {}
       setVisible(false);
       onPhase("done");
-    }, reducedMotion ? 240 : 5650);
+    }, reducedMotion ? 240 : 5250);
     return () => { window.clearTimeout(traceTimer); window.clearTimeout(revealTimer); window.clearTimeout(finishTimer); };
   }, [onPhase]);
 
@@ -78,15 +78,8 @@ function FletcherBookIntro({ onPhase }: { onPhase: (phase: IntroPhase) => void }
 
   if (!visible) return null;
   return <div className={`fx-loader book-intro-loader ${tracing ? "is-tracing" : ""} ${leaving ? "is-leaving" : ""}`} role="status" aria-live="polite" aria-label={tracing ? "Wiping cleansing foam to reveal Fletcher Tattoos before opening the artist book" : "Preparing the Fletcher Tattoos artist book"}>
-    <div className="fx-loader-grid" aria-hidden="true" />
-    <div className="fx-wipe-canvas" aria-hidden="true">
-      <div className="fx-wipe-stage">
-        <img className="fx-wipe-logo" src="/fletcher-tattoos-logo.png" alt="" />
-        <div className="fx-wipe-foam"><i /><i /><i /><i /><b /><b /><b /><b /><b /><b /><b /><b /><b /><b /></div>
-        <span className="fx-wipe-sheen" />
-      </div>
-      <img className="fx-wipe-hand-photo" src="/fletcher/black-glove-cloth.png" alt="" />
-    </div>
+    <div className="book-intro-surface" aria-hidden="true"><i /><i /><i /><i /></div>
+    <img className="fx-wipe-hand-photo book-intro-hand" src="/fletcher/black-glove-cloth.png" alt="" aria-hidden="true" />
     <span className="book-intro-a11y">The Fletcher Tattoos artist book will be ready shortly.</span>
   </div>;
 }
