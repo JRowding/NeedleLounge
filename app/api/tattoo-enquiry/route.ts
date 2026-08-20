@@ -9,13 +9,9 @@ const MAX_FILES = 4;
 const MAX_FILE_BYTES = 5 * 1024 * 1024;
 const MAX_TOTAL_FILE_BYTES = 12 * 1024 * 1024;
 const attempts = new Map<string, number[]>();
-// Resend's onboarding sender is restricted by Resend to the account owner's inbox.
-// This is intentionally test-only and must be replaced with a verified Fletcher domain
-// before the form is used for real client enquiries.
-const TEST_SENDER = "Fletcher Tattoos <onboarding@resend.dev>";
-const TEST_RECIPIENT = "jon.rowding@gmail.com";
+const APPS_SCRIPT_ENDPOINT = "https://script.google.com/macros/s/AKfycbwbLiyJE3tDQMPgUcM5M5VOaaSpdxW2yglxDO_J33gw2T7pk81BW1EHP-mspVpritVqJw/exec";
 
-type ResendAttachment = { filename: string; content: string };
+type EnquiryReference = { filename: string; content: string };
 
 function json(message: string, status: number, headers?: HeadersInit) {
   return Response.json({ message }, { status, headers });
@@ -85,8 +81,8 @@ export async function POST(request: Request) {
   const contentLength = Number(request.headers.get("content-length") || 0);
   if (contentLength > MAX_BODY_BYTES) return json("The selected images are too large.", 413);
 
-  const apiKey = process.env.AFTATTOOS_API_KEY;
-  if (!apiKey) return json("Online enquiry delivery is not available yet.", 503);
+  const appsScriptSecret = process.env.AFTATTOOS_APPS_SCRIPT_SECRET;
+  if (!appsScriptSecret) return json("Online enquiry delivery is not available yet.", 503);
 
   let data: FormData;
   try {
@@ -109,10 +105,10 @@ export async function POST(request: Request) {
   if (!files.length || files.length > MAX_FILES) return json("Please add between one and four reference images.", 400);
   if (files.some((file) => file.size > MAX_FILE_BYTES) || files.reduce((sum, file) => sum + file.size, 0) > MAX_TOTAL_FILE_BYTES) return json("The selected images exceed the upload limit.", 413);
 
-  const attachments: ResendAttachment[] = [];
+  const references: EnquiryReference[] = [];
   for (const [index, file] of files.entries()) {
     if (!(await recognisedImage(file))) return json("One or more reference images are not a supported image file.", 400);
-    attachments.push({ filename: safeFilename(file.name, index), content: Buffer.from(await file.arrayBuffer()).toString("base64") });
+    references.push({ filename: safeFilename(file.name, index), content: Buffer.from(await file.arrayBuffer()).toString("base64") });
   }
 
   const text = [
@@ -125,21 +121,29 @@ export async function POST(request: Request) {
     "Tattoo brief:",
     brief,
     "",
-    `${attachments.length} reference image${attachments.length === 1 ? "" : "s"} attached.`,
+    `${references.length} reference image${references.length === 1 ? "" : "s"} attached.`,
   ].join("\n");
 
   try {
-    const response = await fetch("https://api.resend.com/emails", {
+    const response = await fetch(APPS_SCRIPT_ENDPOINT, {
       method: "POST",
-      headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json", "Idempotency-Key": crypto.randomUUID() },
-      body: JSON.stringify({ from: TEST_SENDER, to: [TEST_RECIPIENT], reply_to: email, subject: `New tattoo enquiry from ${name}`, text, attachments }),
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify({
+        secret: appsScriptSecret,
+        name,
+        email,
+        brief,
+        placement,
+        subject: `New tattoo enquiry from ${name}`,
+        text,
+        references: references.map((reference, index) => ({ ...reference, type: files[index].type })),
+      }),
     });
     if (!response.ok) {
-      if (response.status === 403) {
-        return json("Test delivery is restricted to the Resend account inbox. Confirm this Resend account uses the intended test email, or verify a Fletcher sending domain before accepting live enquiries.", 422);
-      }
       return json("The enquiry could not be delivered. Please try again later.", 502);
     }
+    const result = await response.json().catch(() => null) as { ok?: boolean } | null;
+    if (!result?.ok) return json("The enquiry service did not confirm delivery. Please try again later.", 502);
     return json("Enquiry sent successfully.", 200);
   } catch {
     return json("The enquiry service is temporarily unavailable. Please try again later.", 502);
