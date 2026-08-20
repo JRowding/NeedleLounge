@@ -482,7 +482,9 @@ html:has(.fixed-book-site),body:has(.fixed-book-site){height:100%;overflow:hidde
   .page-style .fixed-style-intro{margin-top:7px;font-size:7px;line-height:1.4}
   .page-style .style-photo-top{top:31%;height:26%}
   .page-style .style-photo-edge{top:58%;height:27%}
-  .page-faq .fixed-book-page-title{left:6%;width:40%!important}
+  .page-faq .fixed-book-page-title{left:2.5%;width:46%!important}
+  .page-faq .fixed-book-page-title h1{font-size:5vw;line-height:1;margin-top:7px}
+  .page-faq .fixed-book-page-title h1 em{display:inline-block;white-space:nowrap}
   .page-faq .fixed-book-faq{left:52%;right:4%}
   .page-booking .booking-review-low.has-review{top:42.5%}
 }
