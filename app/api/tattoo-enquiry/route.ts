@@ -63,6 +63,14 @@ function allowedOrigin(request: Request) {
   if (!origin) return false;
   const configured = process.env.BOOKING_BASE_URL;
   const accepted = new Set([new URL(request.url).origin]);
+  const forwardedHost = request.headers.get("x-forwarded-host")?.split(",")[0]?.trim();
+  const host = forwardedHost || request.headers.get("host");
+  const forwardedProto = request.headers.get("x-forwarded-proto")?.split(",")[0]?.trim();
+  if (host) {
+    for (const protocol of new Set([forwardedProto, "https", "http"])) {
+      if (protocol === "https" || protocol === "http") accepted.add(`${protocol}://${host}`);
+    }
+  }
   if (configured) {
     try { accepted.add(new URL(configured).origin); } catch {}
   }
