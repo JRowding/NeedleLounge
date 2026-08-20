@@ -9,6 +9,11 @@ const MAX_FILES = 4;
 const MAX_FILE_BYTES = 5 * 1024 * 1024;
 const MAX_TOTAL_FILE_BYTES = 12 * 1024 * 1024;
 const attempts = new Map<string, number[]>();
+// Resend's onboarding sender is restricted by Resend to the account owner's inbox.
+// This is intentionally test-only and must be replaced with a verified Fletcher domain
+// before the form is used for real client enquiries.
+const TEST_SENDER = "Fletcher Tattoos <onboarding@resend.dev>";
+const TEST_RECIPIENT = "jon.rowding@gmail.com";
 
 type ResendAttachment = { filename: string; content: string };
 
@@ -61,7 +66,6 @@ function safeFilename(name: string, index: number) {
 function allowedOrigin(request: Request) {
   const origin = request.headers.get("origin");
   if (!origin) return false;
-  const configured = process.env.BOOKING_BASE_URL;
   const accepted = new Set([new URL(request.url).origin]);
   const forwardedHost = request.headers.get("x-forwarded-host")?.split(",")[0]?.trim();
   const host = forwardedHost || request.headers.get("host");
@@ -70,9 +74,6 @@ function allowedOrigin(request: Request) {
     for (const protocol of new Set([forwardedProto, "https", "http"])) {
       if (protocol === "https" || protocol === "http") accepted.add(`${protocol}://${host}`);
     }
-  }
-  if (configured) {
-    try { accepted.add(new URL(configured).origin); } catch {}
   }
   return accepted.has(origin);
 }
@@ -85,10 +86,7 @@ export async function POST(request: Request) {
   if (contentLength > MAX_BODY_BYTES) return json("The selected images are too large.", 413);
 
   const apiKey = process.env.AFTATTOOS_API_KEY;
-  const sender = process.env.AFTATTOOS_FROM;
-  const recipient = process.env.AFTATTOOS_RECIPIENT;
-  const deliveryEnabled = process.env.AFTATTOOS_DELIVERY_ENABLED === "true";
-  if (!deliveryEnabled || !apiKey || !sender || !recipient) return json("Online enquiry delivery is not available yet.", 503);
+  if (!apiKey) return json("Online enquiry delivery is not available yet.", 503);
 
   let data: FormData;
   try {
@@ -133,10 +131,15 @@ export async function POST(request: Request) {
   try {
     const response = await fetch("https://api.resend.com/emails", {
       method: "POST",
-      headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
-      body: JSON.stringify({ from: sender, to: [recipient], reply_to: email, subject: `New tattoo enquiry from ${name}`, text, attachments }),
+      headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json", "Idempotency-Key": crypto.randomUUID() },
+      body: JSON.stringify({ from: TEST_SENDER, to: [TEST_RECIPIENT], reply_to: email, subject: `New tattoo enquiry from ${name}`, text, attachments }),
     });
-    if (!response.ok) return json("The enquiry could not be delivered. Please try again later.", 502);
+    if (!response.ok) {
+      if (response.status === 403) {
+        return json("Test delivery is restricted to the Resend account inbox. Confirm this Resend account uses the intended test email, or verify a Fletcher sending domain before accepting live enquiries.", 422);
+      }
+      return json("The enquiry could not be delivered. Please try again later.", 502);
+    }
     return json("Enquiry sent successfully.", 200);
   } catch {
     return json("The enquiry service is temporarily unavailable. Please try again later.", 502);

@@ -2,13 +2,13 @@
 
 The public form posts only to the same-origin server route at `/api/tattoo-enquiry`. The Resend key and recipient are read from server environment variables and are never rendered into the browser bundle.
 
-Configure these private variables on the existing Render service:
+For the current test-only setup, configure one private variable on the existing Render service:
 
 - `AFTATTOOS_API_KEY`: the Resend API key.
-- `AFTATTOOS_FROM`: a sender using a domain or address verified in Resend, for example `Fletcher Tattoos <enquiries@verified-domain.example>`.
-- `AFTATTOOS_RECIPIENT`: the private studio/test recipient.
-- `AFTATTOOS_DELIVERY_ENABLED`: leave as `false` until the sender is verified and the first live test is explicitly approved; then set it to `true`.
-- `BOOKING_BASE_URL`: the public HTTPS origin, currently `https://needlelounge.onrender.com`.
+
+The server uses Resend's test sender, `Fletcher Tattoos <onboarding@resend.dev>`, and routes only to the intended test inbox held in server code. Neither value is rendered in browser code. Resend permits its `resend.dev` test sender to deliver only to the email address associated with that Resend account. If the account uses a different inbox, the form returns a clear actionable error rather than a false success.
+
+Before accepting real customer enquiries, verify a Fletcher-controlled sender domain in Resend and replace the test-only sender/recipient constants with private deployment configuration.
 
 Do not put real values in `.env.example`, client code, Git, screenshots or support messages. A Gmail password is not required.
 
