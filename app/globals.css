@@ -454,16 +454,17 @@ html:has(.fixed-book-site),body:has(.fixed-book-site){height:100%;overflow:hidde
   .page-booking .fixed-book-checklist li{padding:4px 0;font-size:9px}
 }
 
-/* Mobile-only editorial cleanup. Desktop deliberately retains the original
-   folios, captions, numbering and scrapbook composition. */
-@media(max-width:600px){
-  .fixed-book-folio,
-  .page-artist .fixed-book-artist-copy>.fixed-book-kicker,
-  .page-artist .artist-secondary-copy>span,
-  .fixed-book-photo figcaption,
-  .fixed-book-tabs button>span,
-  .page-links .fixed-links-copy nav a>span{display:none}
+/* Editorial labels are removed at every size. The two in-flow Artist labels
+   retain an invisible footprint so desktop composition does not reflow. */
+.fixed-book-folio,
+.fixed-book-photo figcaption,
+.fixed-book-tabs button>span,
+.page-links .fixed-links-copy nav a>span{display:none}
+.page-artist .fixed-book-artist-copy>.fixed-book-kicker,
+.page-artist .artist-secondary-copy>span{visibility:hidden}
 
+/* Placement and responsive image corrections remain mobile-only. */
+@media(max-width:600px){
   .page-style .style-photo-top,
   .page-style .style-photo-edge{display:block;visibility:visible;opacity:1;z-index:8}
   .page-style .style-photo-top img,
