@@ -453,6 +453,27 @@ html:has(.fixed-book-site),body:has(.fixed-book-site){height:100%;overflow:hidde
   .page-booking .fixed-book-checklist ol{margin-top:5px}
   .page-booking .fixed-book-checklist li{padding:4px 0;font-size:9px}
 }
+
+/* Mobile-only editorial cleanup. Desktop deliberately retains the original
+   folios, captions, numbering and scrapbook composition. */
+@media(max-width:600px){
+  .fixed-book-folio,
+  .page-artist .fixed-book-artist-copy>.fixed-book-kicker,
+  .page-artist .artist-secondary-copy>span,
+  .fixed-book-photo figcaption,
+  .fixed-book-tabs button>span,
+  .page-links .fixed-links-copy nav a>span{display:none}
+
+  .page-style .style-photo-top,
+  .page-style .style-photo-edge{display:block;visibility:visible;opacity:1;z-index:8}
+  .page-style .style-photo-top img,
+  .page-style .style-photo-edge img{display:block;visibility:visible;opacity:1;width:100%;height:100%;object-fit:cover}
+
+  .page-links .links-review-one.has-review{top:49%}
+  .page-links .links-review-two.has-review{top:46%}
+  .page-faq .fixed-book-faq{left:50%}
+  .page-booking .booking-review-low.has-review{top:42.5%}
+}
 @media(prefers-reduced-motion:reduce){.booking-paper-overlay,.booking-paper-dialog{animation:none}.booking-paper-dialog{transform:none}}
 
 /* Fletcher Tattoos destination */
