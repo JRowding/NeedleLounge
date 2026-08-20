@@ -461,7 +461,14 @@ html:has(.fixed-book-site),body:has(.fixed-book-site){height:100%;overflow:hidde
 .fixed-book-tabs button>span,
 .page-links .fixed-links-copy nav a>span{display:none}
 .page-artist .fixed-book-artist-copy>.fixed-book-kicker,
-.page-artist .artist-secondary-copy>span{visibility:hidden}
+.page-artist .artist-secondary-copy>span,
+.page-style .fixed-style-heading>.fixed-book-kicker,
+.page-links .fixed-links-copy>.fixed-book-kicker,
+.page-faq .fixed-book-page-title>.fixed-book-kicker,
+.page-booking .fixed-book-booking-copy>.fixed-book-kicker{visibility:hidden}
+.fixed-style-intro{margin-top:12px;font:400 clamp(10px,1vw,14px)/1.65 'DM Sans',sans-serif;color:#2b241c}
+.page-faq .fixed-book-page-title{left:7%;width:30%}
+.page-faq .fixed-book-faq{left:55%;right:5%}
 
 /* Placement and responsive image corrections remain mobile-only. */
 @media(max-width:600px){
@@ -472,7 +479,11 @@ html:has(.fixed-book-site),body:has(.fixed-book-site){height:100%;overflow:hidde
 
   .page-links .links-review-one.has-review{top:49%}
   .page-links .links-review-two.has-review{top:46%}
-  .page-faq .fixed-book-faq{left:50%}
+  .page-style .fixed-style-intro{margin-top:7px;font-size:7px;line-height:1.4}
+  .page-style .style-photo-top{top:31%;height:26%}
+  .page-style .style-photo-edge{top:58%;height:27%}
+  .page-faq .fixed-book-page-title{left:6%;width:40%!important}
+  .page-faq .fixed-book-faq{left:52%;right:4%}
   .page-booking .booking-review-low.has-review{top:42.5%}
 }
 @media(prefers-reduced-motion:reduce){.booking-paper-overlay,.booking-paper-dialog{animation:none}.booking-paper-dialog{transform:none}}
