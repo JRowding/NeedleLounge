@@ -62,8 +62,11 @@ function allowedOrigin(request: Request) {
   const origin = request.headers.get("origin");
   if (!origin) return false;
   const configured = process.env.BOOKING_BASE_URL;
-  const expected = configured ? new URL(configured).origin : new URL(request.url).origin;
-  return origin === expected;
+  const accepted = new Set([new URL(request.url).origin]);
+  if (configured) {
+    try { accepted.add(new URL(configured).origin); } catch {}
+  }
+  return accepted.has(origin);
 }
 
 export async function POST(request: Request) {
