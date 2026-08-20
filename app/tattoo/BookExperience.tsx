@@ -12,6 +12,9 @@ const photos = [
 ] as const;
 const pages = ["Artist", "Style", "Links", "FAQ", "Booking"] as const;
 type Page = typeof pages[number];
+const MAX_REFERENCE_FILES = 4;
+const MAX_REFERENCE_FILE_BYTES = 5 * 1024 * 1024;
+const MAX_REFERENCE_TOTAL_BYTES = 12 * 1024 * 1024;
 
 function Photo({ index, className = "" }: { index: number; className?: string }) {
   return <figure className={`fixed-book-photo ${className}`}><img src={photos[index][0]} alt={photos[index][1]} /><figcaption>Abbie’s work</figcaption></figure>;
@@ -117,7 +120,9 @@ function BookingEnquiryModal({ onClose }: { onClose: () => void }) {
   const closeRef = useRef<HTMLButtonElement>(null);
   const [files, setFiles] = useState<Array<{ file: File; url: string }>>([]);
   const [fileError, setFileError] = useState("");
+  const [submission, setSubmission] = useState<{ state: "idle" | "sending" | "success" | "error"; message: string }>({ state: "idle", message: "" });
   const objectUrls = useRef(new Set<string>());
+  const openedAt = useRef(Date.now());
 
   useEffect(() => () => { objectUrls.current.forEach(URL.revokeObjectURL); objectUrls.current.clear(); }, []);
 
@@ -141,22 +146,39 @@ function BookingEnquiryModal({ onClose }: { onClose: () => void }) {
 
   function chooseFiles(event: ChangeEvent<HTMLInputElement>) {
     const incoming = Array.from(event.target.files ?? []);
-    const allowed = incoming.filter((file) => /^image\/(jpeg|png|webp|gif)$/i.test(file.type) && file.size <= 10 * 1024 * 1024);
+    let totalBytes = files.reduce((sum, item) => sum + item.file.size, 0);
+    const allowed = incoming.filter((file) => {
+      const valid = /^image\/(jpeg|png|webp|gif)$/i.test(file.type) && file.size <= MAX_REFERENCE_FILE_BYTES && files.length < MAX_REFERENCE_FILES && totalBytes + file.size <= MAX_REFERENCE_TOTAL_BYTES;
+      if (valid) totalBytes += file.size;
+      return valid;
+    }).slice(0, Math.max(0, MAX_REFERENCE_FILES - files.length));
     const selected = allowed.map((file) => { const url = URL.createObjectURL(file); objectUrls.current.add(url); return { file, url }; });
-    setFiles((current) => {
-      const combined = [...current, ...selected];
-      combined.slice(8).forEach(({ url }) => { URL.revokeObjectURL(url); objectUrls.current.delete(url); });
-      return combined.slice(0, 8);
-    });
-    setFileError(allowed.length === incoming.length ? "" : "Use JPG, PNG, WebP or GIF images up to 10 MB each.");
+    setFiles((current) => [...current, ...selected]);
+    setFileError(allowed.length === incoming.length ? "" : "Add up to four JPG, PNG, WebP or GIF images, 5 MB each and 12 MB total.");
+    setSubmission({ state: "idle", message: "" });
     event.target.value = "";
   }
 
-  function reviewLocally(event: FormEvent<HTMLFormElement>) {
+  async function sendEnquiry(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = event.currentTarget;
     if (!form.reportValidity()) return;
     if (!files.length) { setFileError("Please add at least one reference image."); return; }
+    setSubmission({ state: "sending", message: "" });
+    const data = new FormData(form);
+    data.set("openedAt", String(openedAt.current));
+    files.forEach(({ file }) => data.append("references", file, file.name));
+    try {
+      const response = await fetch("/api/tattoo-enquiry", { method: "POST", body: data, headers: { Accept: "application/json" } });
+      const result = await response.json().catch(() => ({})) as { message?: string };
+      if (!response.ok) throw new Error(result.message || "The enquiry could not be sent. Please try again later.");
+      files.forEach(({ url }) => { URL.revokeObjectURL(url); objectUrls.current.delete(url); });
+      setFiles([]);
+      form.reset();
+      setSubmission({ state: "success", message: "Enquiry sent successfully." });
+    } catch (error) {
+      setSubmission({ state: "error", message: error instanceof Error ? error.message : "The enquiry could not be sent. Please try again later." });
+    }
   }
 
   return <div className="booking-paper-overlay" role="presentation" onClick={(event) => { if (event.target === event.currentTarget) onClose(); }}>
@@ -164,18 +186,19 @@ function BookingEnquiryModal({ onClose }: { onClose: () => void }) {
       <span className="booking-paper-crease crease-one" aria-hidden="true" /><span className="booking-paper-crease crease-two" aria-hidden="true" />
       <button ref={closeRef} className="booking-paper-close" type="button" onClick={onClose} aria-label="Close booking enquiry">Close <span aria-hidden="true">×</span></button>
       <header><h2 id="booking-paper-title">Tell me about<br /><em>your idea.</em></h2><p id="booking-paper-intro">A few thoughtful details help shape the first conversation.</p></header>
-      <form className="booking-paper-form" onSubmit={reviewLocally}>
+      <form className="booking-paper-form" onSubmit={sendEnquiry}>
+        <label className="booking-paper-trap" aria-hidden="true">Website<input name="website" autoComplete="off" tabIndex={-1} /></label>
         <label>Name<input name="name" autoComplete="name" required /></label>
         <label>Email<input name="email" type="email" autoComplete="email" required /></label>
         <label className="booking-paper-wide">Tattoo brief<textarea name="brief" required minLength={20} rows={4} placeholder="Subject, style, size and the feeling you want the piece to have…" /></label>
         <label className="booking-paper-wide">Placement<input name="placement" required placeholder="For example: inner forearm" /></label>
         <fieldset className="booking-paper-upload booking-paper-wide" aria-describedby="booking-upload-help booking-upload-error">
           <legend>Reference images</legend>
-          <label><input type="file" accept="image/jpeg,image/png,image/webp,image/gif" multiple onChange={chooseFiles} /><span>Add reference images</span><small id="booking-upload-help">JPG, PNG, WebP or GIF · up to 8 files · 10 MB each · kept on this device</small></label>
+          <label><input type="file" accept="image/jpeg,image/png,image/webp,image/gif" multiple onChange={chooseFiles} /><span>Add reference images</span><small id="booking-upload-help">JPG, PNG, WebP or GIF · up to 4 files · 5 MB each</small></label>
           {fileError && <p id="booking-upload-error" role="alert">{fileError}</p>}
           {!!files.length && <ul className="booking-paper-previews" aria-label="Selected reference images">{files.map(({ file, url }, index) => <li key={`${file.name}-${file.lastModified}-${index}`}><img src={url} alt="" /><span title={file.name}>{file.name}</span><button type="button" onClick={() => setFiles((current) => current.filter((item, itemIndex) => { if (itemIndex === index) { URL.revokeObjectURL(item.url); objectUrls.current.delete(item.url); return false; } return true; }))} aria-label={`Remove ${file.name}`}>×</button></li>)}</ul>}
         </fieldset>
-        <div className="booking-paper-finish booking-paper-wide"><button type="submit">Send enquiry</button></div>
+        <div className="booking-paper-finish booking-paper-wide"><button type="submit" disabled={submission.state === "sending"}>{submission.state === "sending" ? "Sending…" : "Send enquiry"}</button>{submission.message && <strong className={submission.state === "error" ? "is-error" : ""} role="status">{submission.message}</strong>}</div>
       </form>
     </div>
   </div>;
