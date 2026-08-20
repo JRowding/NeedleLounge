@@ -117,7 +117,6 @@ function BookingEnquiryModal({ onClose }: { onClose: () => void }) {
   const closeRef = useRef<HTMLButtonElement>(null);
   const [files, setFiles] = useState<Array<{ file: File; url: string }>>([]);
   const [fileError, setFileError] = useState("");
-  const [formMessage, setFormMessage] = useState("");
   const objectUrls = useRef(new Set<string>());
 
   useEffect(() => () => { objectUrls.current.forEach(URL.revokeObjectURL); objectUrls.current.clear(); }, []);
@@ -158,14 +157,13 @@ function BookingEnquiryModal({ onClose }: { onClose: () => void }) {
     const form = event.currentTarget;
     if (!form.reportValidity()) return;
     if (!files.length) { setFileError("Please add at least one reference image."); return; }
-    setFormMessage("Your enquiry is ready to review. Sending will be connected securely in the next stage; nothing has left this device.");
   }
 
   return <div className="booking-paper-overlay" role="presentation" onClick={(event) => { if (event.target === event.currentTarget) onClose(); }}>
     <div ref={dialogRef} className="booking-paper-dialog" role="dialog" aria-modal="true" aria-labelledby="booking-paper-title" aria-describedby="booking-paper-intro">
       <span className="booking-paper-crease crease-one" aria-hidden="true" /><span className="booking-paper-crease crease-two" aria-hidden="true" />
       <button ref={closeRef} className="booking-paper-close" type="button" onClick={onClose} aria-label="Close booking enquiry">Close <span aria-hidden="true">×</span></button>
-      <header><p>Fletcher Tattoos · Enquiry sheet</p><h2 id="booking-paper-title">Tell me about<br /><em>your idea.</em></h2><p id="booking-paper-intro">A few thoughtful details help shape the first conversation. This local form does not send or upload anything yet.</p></header>
+      <header><h2 id="booking-paper-title">Tell me about<br /><em>your idea.</em></h2><p id="booking-paper-intro">A few thoughtful details help shape the first conversation.</p></header>
       <form className="booking-paper-form" onSubmit={reviewLocally}>
         <label>Name<input name="name" autoComplete="name" required /></label>
         <label>Email<input name="email" type="email" autoComplete="email" required /></label>
@@ -177,7 +175,7 @@ function BookingEnquiryModal({ onClose }: { onClose: () => void }) {
           {fileError && <p id="booking-upload-error" role="alert">{fileError}</p>}
           {!!files.length && <ul className="booking-paper-previews" aria-label="Selected reference images">{files.map(({ file, url }, index) => <li key={`${file.name}-${file.lastModified}-${index}`}><img src={url} alt="" /><span title={file.name}>{file.name}</span><button type="button" onClick={() => setFiles((current) => current.filter((item, itemIndex) => { if (itemIndex === index) { URL.revokeObjectURL(item.url); objectUrls.current.delete(item.url); return false; } return true; }))} aria-label={`Remove ${file.name}`}>×</button></li>)}</ul>}
         </fieldset>
-        <div className="booking-paper-finish booking-paper-wide"><button type="submit">Review enquiry locally</button><p>Sending will be connected next. This action never contacts the studio or confirms an appointment.</p>{formMessage && <strong role="status">{formMessage}</strong>}</div>
+        <div className="booking-paper-finish booking-paper-wide"><button type="submit">Send enquiry</button></div>
       </form>
     </div>
   </div>;
