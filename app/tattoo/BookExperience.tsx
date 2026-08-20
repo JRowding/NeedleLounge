@@ -14,11 +14,11 @@ const pages = ["Artist", "Style", "Links", "FAQ", "Booking"] as const;
 type Page = typeof pages[number];
 
 function Photo({ index, className = "" }: { index: number; className?: string }) {
-  return <figure className={`fixed-book-photo ${className}`}><img src={photos[index][0]} alt={photos[index][1]} /><figcaption>Fletcher Tattoos</figcaption></figure>;
+  return <figure className={`fixed-book-photo ${className}`}><img src={photos[index][0]} alt={photos[index][1]} /><figcaption>Abbie’s work</figcaption></figure>;
 }
 
 function AboutPhoto({ src, alt, className }: { src: string; alt: string; className: string }) {
-  return <figure className={`fixed-book-photo fixed-about-photo ${className}`}><img src={src} alt={alt} /><figcaption>From Abbie’s About Me page</figcaption></figure>;
+  return <figure className={`fixed-book-photo fixed-about-photo ${className}`}><img src={src} alt={alt} /><figcaption>Abbie at work</figcaption></figure>;
 }
 
 const VERIFIED_REVIEWS = [
@@ -29,7 +29,7 @@ const VERIFIED_REVIEWS = [
 ] as const;
 
 function ReviewNote({ number, className = "" }: { number: number; className?: string }) {
-  return <aside className={`fixed-scrap-note has-review ${className}`} aria-label={`Anonymous client review ${number}`}><i aria-hidden="true" /><span className="review-copy">“{VERIFIED_REVIEWS[number - 1]}”</span></aside>;
+  return <aside className={`fixed-scrap-note has-review ${className}`} aria-label={`Anonymous client review ${number}`}><i aria-hidden="true" /><strong className="review-title">Reviews by you</strong><span className="review-copy">“{VERIFIED_REVIEWS[number - 1]}”</span></aside>;
 }
 
 function PageContents({ page, onBookingOpen }: { page: Page; onBookingOpen?: () => void }) {
